@@ -1,0 +1,105 @@
+.root {
+  display: grid;
+  gap: 14px;
+}
+
+.section {
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.sectionSubtitle {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.rowWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.checkRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  user-select: none;
+}
+
+.select {
+  height: 40px;
+  padding: 10px 12px;
+  border-radius: var(--radiusSm);
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--fg);
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  user-select: none;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  font-weight: 650;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.textarea {
+  min-height: 200px;
+  padding: 12px;
+  border-radius: var(--radiusSm);
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--fg);
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  line-height: 1.4;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

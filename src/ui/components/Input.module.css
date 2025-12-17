@@ -1,0 +1,14 @@
+.input {
+  height: 40px;
+  padding: 10px 12px;
+  border-radius: var(--radiusSm);
+  border: 1px solid var(--border);
+  background: var(--panel2);
+  color: var(--fg);
+  outline: none;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+

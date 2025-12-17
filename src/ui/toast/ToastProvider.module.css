@@ -1,0 +1,40 @@
+.container {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  gap: 10px;
+  z-index: 100;
+}
+
+.toast {
+  width: min(360px, calc(100vw - 32px));
+  padding: 12px 12px;
+  border-radius: var(--radiusSm);
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 30px 70px -55px var(--shadow);
+}
+
+.toastTitle {
+  font-weight: 650;
+}
+
+.toastMessage {
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.success {
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+
+.error {
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+.info {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+

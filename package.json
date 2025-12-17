@@ -1,0 +1,33 @@
+{
+  "name": "wifiary",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "tauri:dev": "tauri dev",
+    "tauri:dev:debug": "WIFIARY_DEBUG=1 RUST_LOG=wifiary=debug,tauri=info tauri dev",
+    "tauri:build": "tauri build",
+    "polkit:install": "bash scripts/polkit-install.sh",
+    "polkit:install:release": "bash scripts/polkit-install.sh --release",
+    "polkit:install:passwordless-wheel": "bash scripts/polkit-install.sh --passwordless-wheel",
+    "polkit:uninstall": "bash scripts/polkit-uninstall.sh"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^4.5.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.6"
+  }
+}

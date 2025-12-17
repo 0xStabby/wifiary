@@ -1,0 +1,54 @@
+:root {
+  --bg: #0f1115;
+  --panel: #141823;
+  --panel2: #171c29;
+  --fg: #e6eaf2;
+  --muted: #a6b0c2;
+  --border: rgba(255, 255, 255, 0.09);
+  --shadow: rgba(0, 0, 0, 0.35);
+
+  --primary: #7aa2f7;
+  --primaryFg: #0b1020;
+  --danger: #f7768e;
+  --warning: #e0af68;
+  --success: #9ece6a;
+
+  --focus: rgba(122, 162, 247, 0.4);
+  --radius: 14px;
+  --radiusSm: 10px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--primary);
+}
+

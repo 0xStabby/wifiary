@@ -1,0 +1,8 @@
+// Allow active local users in the `wheel` group to run WiFiary's helper without a password prompt.
+// If you prefer prompting, remove this file and keep the default `auth_admin_keep` policy.
+polkit.addRule(function (action, subject) {
+  if (action.id === "org.wifiary.helper.run" && subject.active && subject.isInGroup("wheel")) {
+    return polkit.Result.YES;
+  }
+});
+
