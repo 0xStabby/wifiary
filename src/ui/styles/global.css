@@ -19,6 +19,31 @@
 
   --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+
+  /* Extended theme tokens (compatible with WiFiary + external theme JSON/CSS) */
+  --background: var(--bg);
+  --surface: var(--panel);
+  --text: var(--fg);
+  --info: var(--primary);
+
+  --button-bg: linear-gradient(
+    color-mix(in srgb, var(--panel2) 85%, black),
+    color-mix(in srgb, var(--bg) 85%, black)
+  );
+  --button-bg-hover: color-mix(in srgb, var(--panel2) 75%, var(--bg));
+  --default-btn-background: var(--button-bg);
+  --default-btn-background-hover: var(--button-bg-hover);
+
+  --shadow-1: 0 4px 10px rgb(0 0 0 / 30%);
+  --overlay: rgb(0 0 0 / 55%);
+  --modal-bg: var(--surface);
+
+  /* Helps native controls (select dropdowns) match dark UI by default */
+  color-scheme: dark;
+}
+
+:root[data-color-scheme="light"] {
+  color-scheme: light;
 }
 
 html,
@@ -43,6 +68,18 @@ textarea {
   font: inherit;
 }
 
+select {
+  font: inherit;
+  background: var(--panel2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+option {
+  background: var(--panel);
+  color: var(--fg);
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
@@ -51,4 +88,3 @@ textarea {
 a {
   color: var(--primary);
 }
-

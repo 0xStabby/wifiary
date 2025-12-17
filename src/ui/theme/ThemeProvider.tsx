@@ -22,6 +22,20 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+function pickColorScheme(bg: string, fallback: "dark" | "light") {
+  const hex = bg.trim().toLowerCase();
+  const m6 = /^#([0-9a-f]{6})$/.exec(hex);
+  const m3 = /^#([0-9a-f]{3})$/.exec(hex);
+  const raw = m6?.[1] ?? (m3 ? m3[1].split("").map((c) => c + c).join("") : null);
+  if (!raw) return fallback;
+
+  const r = parseInt(raw.slice(0, 2), 16) / 255;
+  const g = parseInt(raw.slice(2, 4), 16) / 255;
+  const b = parseInt(raw.slice(4, 6), 16) / 255;
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.6 ? "light" : "dark";
+}
+
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
   const c = theme.colors;
@@ -36,12 +50,33 @@ function applyTheme(theme: Theme) {
   root.style.setProperty("--danger", c.danger);
   root.style.setProperty("--warning", c.warning);
   root.style.setProperty("--success", c.success);
+  root.style.setProperty("--focus", `color-mix(in srgb, ${c.primary} 40%, transparent)`);
+
+  // Extended tokens (used by some theme packs + future styling)
+  root.style.setProperty("--background", c.bg);
+  root.style.setProperty("--surface", c.panel);
+  root.style.setProperty("--text", c.fg);
+  root.style.setProperty("--info", c.primary);
+  root.style.setProperty("--modal-bg", c.panel);
+  root.style.setProperty("--overlay", "rgb(0 0 0 / 55%)");
+  root.style.setProperty("--shadow-1", "0 4px 10px rgb(0 0 0 / 30%)");
+  root.style.setProperty("--button-bg", `linear-gradient(${c.panel2}, ${c.bg})`);
+  root.style.setProperty("--button-bg-hover", c.panel2);
+  root.style.setProperty("--default-btn-background", `linear-gradient(${c.panel2}, ${c.bg})`);
+  root.style.setProperty("--default-btn-background-hover", c.panel2);
+
+  const scheme = pickColorScheme(c.bg, "dark");
+  root.dataset.colorScheme = scheme;
 }
 
 function pickDefaultTheme(prefersDark: boolean) {
+  const dark = builtInThemes.find((t) => t.name === "Dark");
+  const light = builtInThemes.find((t) => t.name === "Light");
+  if (dark && light) return prefersDark ? dark : light;
+
   const mocha = builtInThemes.find((t) => t.name.includes("Mocha"));
   const latte = builtInThemes.find((t) => t.name.includes("Latte"));
-  return prefersDark ? mocha ?? builtInThemes[0] : latte ?? builtInThemes[0];
+  return prefersDark ? dark ?? mocha ?? builtInThemes[0] : light ?? latte ?? builtInThemes[0];
 }
 
 export function ThemeProvider({ children }: PropsWithChildren) {
@@ -122,4 +157,3 @@ export function useTheme() {
   if (!ctx) throw new Error("ThemeProvider missing");
   return ctx;
 }
-
