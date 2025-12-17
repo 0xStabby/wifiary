@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./SettingsScreen.module.css";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
+import { Select } from "../components/Select";
 import { useWifiStore } from "../state/wifiStore";
 import { builtInThemes } from "../theme/themes";
 import { ThemeSchema } from "../theme/themeSchema";
@@ -49,22 +50,19 @@ export function SettingsScreen() {
             WiFiary auto-detects your wireless device. You can override it if needed.
           </div>
           <div className={styles.row}>
-            <select
+            <Select
               className={styles.select}
+              ariaLabel="Wi‑Fi device"
               value={config.preferredDevice ?? ""}
-              onChange={(e) =>
-                setConfig({ preferredDevice: e.target.value || null }).catch(() => {})
-              }
-            >
-              <option value="">
-                Auto{status.device ? ` (${status.device})` : ""}
-              </option>
-              {devices.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
+              options={[
+                {
+                  value: "",
+                  label: `Auto${status.device ? ` (${status.device})` : ""}`
+                },
+                ...devices.map((d) => ({ value: d, label: d }))
+              ]}
+              onChange={(v) => setConfig({ preferredDevice: v || null }).catch(() => {})}
+            />
             <Button
               variant="ghost"
               onClick={() => refreshDevices().catch(() => {})}
@@ -162,21 +160,17 @@ export function SettingsScreen() {
 
           {config.theme.mode === "built-in" ? (
             <div className={styles.row}>
-              <select
+              <Select
                 className={styles.select}
+                ariaLabel="Built‑in theme"
                 value={config.theme.builtInName}
-                onChange={(e) =>
+                options={builtInThemes.map((t) => ({ value: t.name, label: t.name }))}
+                onChange={(name) =>
                   setConfig({
-                    theme: { ...config.theme, mode: "built-in", builtInName: e.target.value }
+                    theme: { ...config.theme, mode: "built-in", builtInName: name }
                   }).catch(() => {})
                 }
-              >
-                {builtInThemes.map((t) => (
-                  <option key={t.name} value={t.name}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
           ) : null}
 
