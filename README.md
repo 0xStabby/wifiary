@@ -28,6 +28,48 @@ pnpm install
 pnpm tauri:dev
 ```
 
+## Build / install (run from a command)
+
+Build a release binary (no packaging/bundling required):
+
+```bash
+pnpm tauri:build
+```
+
+Install it into your user PATH:
+
+```bash
+install -Dm755 src-tauri/target/release/wifiary ~/.local/bin/wifiary
+```
+
+Install a desktop entry + icon (so it shows in app launchers/docks):
+
+```bash
+bash scripts/desktop-install.sh
+```
+
+Then install the privileged helper + PolicyKit policy (required for Wi‑Fi management):
+
+```bash
+pnpm polkit:install:release
+```
+
+Optionally allow passwordless usage for `wheel` users:
+
+```bash
+pnpm polkit:install:passwordless-wheel
+```
+
+## Packaging installers (optional)
+
+If you want `.deb`/`.rpm`/`.AppImage` bundles (not needed to run `wifiary` locally):
+
+```bash
+pnpm tauri:bundle
+```
+
+Note: AppImage bundling requires `linuxdeploy` to be available in `PATH`.
+
 Notes:
 
 - The app uses a privileged helper (`wifiary-helper`) via `pkexec` for iwd operations.

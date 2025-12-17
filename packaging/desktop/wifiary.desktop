@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=WiFiary
+Comment=Friendly Wi‑Fi connection GUI for iwd
+Exec=wifiary
+Icon=wifiary
+Terminal=false
+Categories=Network;Utility;
+StartupNotify=true
