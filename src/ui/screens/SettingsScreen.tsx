@@ -13,6 +13,7 @@ export function SettingsScreen() {
   const { config, status, setConfig, refreshDevices, devices } = useWifiStore();
 
   const [customJson, setCustomJson] = useState(config.theme.customJson);
+  const [themeOpen, setThemeOpen] = useState(false);
 
   useEffect(() => {
     refreshDevices().catch(() => {});
@@ -29,6 +30,12 @@ export function SettingsScreen() {
       return e instanceof Error ? e.message : String(e);
     }
   }, [config.theme.mode, customJson]);
+
+  const themeLabel = useMemo(() => {
+    if (config.theme.mode === "built-in") return config.theme.builtInName;
+    if (config.theme.mode === "custom") return "Custom JSON";
+    return config.theme.mode === "dark" ? "Dark" : "Light";
+  }, [config.theme.builtInName, config.theme.mode]);
 
   async function saveCustomTheme() {
     try {
@@ -111,82 +118,100 @@ export function SettingsScreen() {
       <Card>
         <div className={styles.section}>
           <div className={styles.sectionTitle}>Theme</div>
-          <div className={styles.rowWrap}>
-            <label className={styles.radio}>
-              <input
-                type="radio"
-                name="theme-mode"
-                checked={config.theme.mode === "built-in"}
-                onChange={() =>
-                  setConfig({ theme: { ...config.theme, mode: "built-in" } }).catch(() => {})
-                }
-              />
-              Built‑in
-            </label>
-            <label className={styles.radio}>
-              <input
-                type="radio"
-                name="theme-mode"
-                checked={config.theme.mode === "dark"}
-                onChange={() =>
-                  setConfig({ theme: { ...config.theme, mode: "dark" } }).catch(() => {})
-                }
-              />
-              Dark
-            </label>
-            <label className={styles.radio}>
-              <input
-                type="radio"
-                name="theme-mode"
-                checked={config.theme.mode === "light"}
-                onChange={() =>
-                  setConfig({ theme: { ...config.theme, mode: "light" } }).catch(() => {})
-                }
-              />
-              Light
-            </label>
-            <label className={styles.radio}>
-              <input
-                type="radio"
-                name="theme-mode"
-                checked={config.theme.mode === "custom"}
-                onChange={() =>
-                  setConfig({ theme: { ...config.theme, mode: "custom" } }).catch(() => {})
-                }
-              />
-              Custom JSON
-            </label>
+          <div className={styles.themeHeader}>
+            <div className={styles.themeMeta}>
+              <div className={styles.themeLabel}>Current theme</div>
+              <div className={styles.themeValue}>{themeLabel}</div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setThemeOpen((open) => !open)}
+            >
+              {themeOpen ? "Hide" : "Change"}
+            </Button>
           </div>
 
-          {config.theme.mode === "built-in" ? (
-            <ThemeSelect />
-          ) : null}
-
-          {config.theme.mode === "custom" ? (
+          {themeOpen ? (
             <>
-              <div className={styles.field}>
-                <label className={styles.label}>Custom theme JSON</label>
-                <textarea
-                  className={styles.textarea}
-                  value={customJson}
-                  onChange={(e) => setCustomJson(e.target.value)}
-                  spellCheck={false}
-                />
-                {customError ? (
-                  <div className={styles.error}>Invalid JSON: {customError}</div>
-                ) : (
-                  <div className={styles.hint}>
-                    Must match the Theme schema: <span className={styles.mono}>name</span> and{" "}
-                    <span className={styles.mono}>colors</span>.
+              <div className={styles.rowWrap}>
+                <label className={styles.radio}>
+                  <input
+                    type="radio"
+                    name="theme-mode"
+                    checked={config.theme.mode === "built-in"}
+                    onChange={() =>
+                      setConfig({ theme: { ...config.theme, mode: "built-in" } }).catch(() => {})
+                    }
+                  />
+                  Built‑in
+                </label>
+                <label className={styles.radio}>
+                  <input
+                    type="radio"
+                    name="theme-mode"
+                    checked={config.theme.mode === "dark"}
+                    onChange={() =>
+                      setConfig({ theme: { ...config.theme, mode: "dark" } }).catch(() => {})
+                    }
+                  />
+                  Dark
+                </label>
+                <label className={styles.radio}>
+                  <input
+                    type="radio"
+                    name="theme-mode"
+                    checked={config.theme.mode === "light"}
+                    onChange={() =>
+                      setConfig({ theme: { ...config.theme, mode: "light" } }).catch(() => {})
+                    }
+                  />
+                  Light
+                </label>
+                <label className={styles.radio}>
+                  <input
+                    type="radio"
+                    name="theme-mode"
+                    checked={config.theme.mode === "custom"}
+                    onChange={() =>
+                      setConfig({ theme: { ...config.theme, mode: "custom" } }).catch(() => {})
+                    }
+                  />
+                  Custom JSON
+                </label>
+              </div>
+
+              {config.theme.mode === "built-in" ? (
+                <ThemeSelect />
+              ) : null}
+
+              {config.theme.mode === "custom" ? (
+                <>
+                  <div className={styles.field}>
+                    <label className={styles.label}>Custom theme JSON</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={customJson}
+                      onChange={(e) => setCustomJson(e.target.value)}
+                      spellCheck={false}
+                    />
+                    {customError ? (
+                      <div className={styles.error}>Invalid JSON: {customError}</div>
+                    ) : (
+                      <div className={styles.hint}>
+                        Must match the Theme schema: <span className={styles.mono}>name</span> and{" "}
+                        <span className={styles.mono}>colors</span>.
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className={styles.actions}>
-                <Button variant="ghost" onClick={() => setCustomJson(config.theme.customJson)}>
-                  Reset
-                </Button>
-                <Button onClick={() => saveCustomTheme().catch(() => {})}>Apply</Button>
-              </div>
+                  <div className={styles.actions}>
+                    <Button variant="ghost" onClick={() => setCustomJson(config.theme.customJson)}>
+                      Reset
+                    </Button>
+                    <Button onClick={() => saveCustomTheme().catch(() => {})}>Apply</Button>
+                  </div>
+                </>
+              ) : null}
             </>
           ) : null}
         </div>

@@ -28,6 +28,23 @@ pnpm install
 pnpm tauri:dev
 ```
 
+## Screenshots
+
+Generate screenshots with Playwright (first run may download the Chromium browser). The script uses mock data and the Hacker theme:
+
+```bash
+pnpm install
+pnpm exec playwright install chromium
+pnpm build
+pnpm screenshots
+```
+
+Images are written to `assets/screenshots/` and embedded below.
+Preview the UI with mock data via `http://localhost:4173/?mock=1` when running `pnpm preview`.
+
+![Networks screen](assets/screenshots/networks.png)
+![Settings screen](assets/screenshots/settings.png)
+
 ## Build / install (run from a command)
 
 Build a release binary (no packaging/bundling required):
