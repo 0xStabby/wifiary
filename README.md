@@ -1,4 +1,12 @@
-# WiFiary
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href=".">
+    <img src="src-tauri/icons/icon.png" alt="WiFiary logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">WiFiary</h3>
+</div>
 
 A polished, non-technical Wi‑Fi connection GUI for **Arch Linux** using **iwd** (`iwctl`), built with **Tauri v2** (Rust backend) + **Vite + React + TypeScript**.
 
