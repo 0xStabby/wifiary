@@ -4,9 +4,9 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { Select } from "../components/Select";
 import { useWifiStore } from "../state/wifiStore";
-import { builtInThemes } from "../theme/themes";
 import { ThemeSchema } from "../theme/themeSchema";
 import { useToasts } from "../toast/ToastProvider";
+import { ThemeSelect } from "../theme/ThemeSelect";
 
 export function SettingsScreen() {
   const { push } = useToasts();
@@ -159,19 +159,7 @@ export function SettingsScreen() {
           </div>
 
           {config.theme.mode === "built-in" ? (
-            <div className={styles.row}>
-              <Select
-                className={styles.select}
-                ariaLabel="Built‑in theme"
-                value={config.theme.builtInName}
-                options={builtInThemes.map((t) => ({ value: t.name, label: t.name }))}
-                onChange={(name) =>
-                  setConfig({
-                    theme: { ...config.theme, mode: "built-in", builtInName: name }
-                  }).catch(() => {})
-                }
-              />
-            </div>
+            <ThemeSelect />
           ) : null}
 
           {config.theme.mode === "custom" ? (
