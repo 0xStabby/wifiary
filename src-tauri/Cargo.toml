@@ -1,6 +1,6 @@
 [package]
 name = "wifiary"
-version = "0.1.0"
+version = "0.0.1"
 description = "WiFiary - a friendly Wi-Fi GUI for iwd (iwctl)"
 authors = ["WiFiary contributors"]
 edition = "2021"

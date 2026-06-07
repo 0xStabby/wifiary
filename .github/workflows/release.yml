@@ -1,0 +1,139 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create or update, for example v0.1.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  linux-x86_64:
+    name: Linux x86_64
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Resolve release metadata
+        id: release_meta
+        shell: bash
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            RELEASE_TAG="$DISPATCH_TAG"
+          else
+            RELEASE_TAG="$GITHUB_REF_NAME"
+          fi
+
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9] ]]; then
+            echo "Release tag must look like v0.1.0; got: $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=${RELEASE_TAG#v}" >> "$GITHUB_ENV"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "release_version=${RELEASE_TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build release binaries
+        run: pnpm tauri:build
+
+      - name: Package prebuilt release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ARCHIVE_ROOT="wifiary-${RELEASE_VERSION}-linux-x86_64"
+
+          rm -rf "$ARCHIVE_ROOT"
+          mkdir -p \
+            "$ARCHIVE_ROOT/bin" \
+            "$ARCHIVE_ROOT/scripts" \
+            "$ARCHIVE_ROOT/packaging/desktop" \
+            "$ARCHIVE_ROOT/packaging/polkit" \
+            "$ARCHIVE_ROOT/src-tauri/icons"
+
+          install -Dm755 src-tauri/target/release/wifiary "$ARCHIVE_ROOT/bin/wifiary"
+          install -Dm755 src-tauri/target/release/wifiary-helper "$ARCHIVE_ROOT/bin/wifiary-helper"
+          install -Dm755 scripts/release-install.sh "$ARCHIVE_ROOT/scripts/release-install.sh"
+          install -Dm755 scripts/desktop-install.sh "$ARCHIVE_ROOT/scripts/desktop-install.sh"
+          install -Dm644 packaging/desktop/wifiary.desktop "$ARCHIVE_ROOT/packaging/desktop/wifiary.desktop"
+          install -Dm644 packaging/polkit/org.wifiary.helper.policy "$ARCHIVE_ROOT/packaging/polkit/org.wifiary.helper.policy"
+          install -Dm644 packaging/polkit/10-wifiary.rules "$ARCHIVE_ROOT/packaging/polkit/10-wifiary.rules"
+          install -Dm644 src-tauri/icons/icon.png "$ARCHIVE_ROOT/src-tauri/icons/icon.png"
+          install -Dm644 README.md "$ARCHIVE_ROOT/README.md"
+
+          tar -czf "${ARCHIVE_ROOT}.tar.gz" "$ARCHIVE_ROOT"
+          sha256sum "${ARCHIVE_ROOT}.tar.gz" > "${ARCHIVE_ROOT}.tar.gz.sha256"
+
+      - name: Build Tauri bundles
+        continue-on-error: true
+        run: pnpm tauri:bundle
+
+      - name: Collect Tauri bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          cp wifiary-*-linux-x86_64.tar.gz release-assets/
+          cp wifiary-*-linux-x86_64.tar.gz.sha256 release-assets/
+          find src-tauri/target/release/bundle -type f \( \
+            -name "*.deb" -o \
+            -name "*.rpm" -o \
+            -name "*.AppImage" \
+          \) -exec cp {} release-assets/ \; 2>/dev/null || true
+          ls -lah release-assets
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_meta.outputs.release_tag }}
+          files: release-assets/*
+          draft: false
+          prerelease: ${{ contains(steps.release_meta.outputs.release_tag, '-') }}
+          generate_release_notes: true
+          body: |
+            Download the `wifiary-*-linux-x86_64.tar.gz` asset, extract it, then run:
+
+            ```bash
+            bash scripts/release-install.sh
+            ```
+
+            WiFiary manages iwd through a PolicyKit helper, so the installer will ask for sudo when installing the helper and policy files.

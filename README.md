@@ -55,6 +55,19 @@ Preview the UI with mock data via `http://localhost:4173/?mock=1` when running `
 
 ## Build / install (run from a command)
 
+For normal installs, download the latest `wifiary-*-linux-x86_64.tar.gz` from
+GitHub Releases, extract it, and run:
+
+```bash
+bash scripts/release-install.sh
+```
+
+This installs the prebuilt app binary, desktop entry, icon, privileged helper,
+and PolicyKit action. Use `bash scripts/release-install.sh --help` for system
+install and passwordless PolicyKit options.
+
+To build locally instead, build a release binary:
+
 Build a release binary (no packaging/bundling required):
 
 ```bash
