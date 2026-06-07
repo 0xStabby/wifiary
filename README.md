@@ -65,6 +65,8 @@ bash scripts/release-install.sh
 This installs the prebuilt app binary, desktop entry, icon, privileged helper,
 and PolicyKit action. Use `bash scripts/release-install.sh --help` for system
 install and passwordless PolicyKit options.
+Downloaded release assets can be verified with
+`sha256sum -c wifiary-<version>_checksums.txt`.
 
 To build locally instead, build a release binary:
 
